@@ -1,0 +1,75 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Root family: {{ rootfamily }}
+{% endblock %}
+
+{% block main %}
+<div class='row'>
+    <div class="col-md-12">
+        <p>Select a lemma on the left to see the current details in the database.</p>
+    </div>
+</div>
+<div class='row'>
+    <div class="col-md-4">
+        <form action="/" method="get">
+            <input type="submit" value="Return to homepage" />
+        </form>
+        <br>
+    </div>
+    <div class="col-md-4">
+        <h4>Lemma details (from database):</h4>
+    </div>
+    <div class="col-md-4">
+        <h4>Word formation details (from database):</h4>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4">
+        {% for n in range(length)%}
+        {% if levellist[n] == '1E'%}
+        <a id="{{rootlemmas[n]}}" class="lemma" onclick="getlemmadict('{{rootlemmas[n]}}')" style="color: blue">{{rootlemmas[n]}}</a>
+        {% endif %}
+        {% if levellist[n] == '2I'%}
+        <a id="{{rootlemmas[n]}}" class="lemma" onclick="getlemmadict('{{rootlemmas[n]}}')" style="color: green">{{rootlemmas[n]}}</a>
+        {% endif %}
+        {% if levellist[n][:2] == '3A'%}
+        <a id="{{rootlemmas[n]}}" class="lemma" onclick="getlemmadict('{{rootlemmas[n]}}')" style="color: purple">{{rootlemmas[n]}}</a>
+        {% endif %}
+        {% if levellist[n][:2] == '4S'%}
+        <a id="{{rootlemmas[n]}}" class="lemma" onclick="getlemmadict('{{rootlemmas[n]}}')" style="color: orange">{{rootlemmas[n]}}</a>
+        {% endif %}
+        <br>
+        {% endfor %}
+    </div>
+    <div class="col-md-4" id="lemmadict">
+    </div>
+    <div class="col-md-4" id="wordinfo">
+    </div>
+</div>
+<script>
+    function getlemmadict(lemma) {
+        $("#lemmadict").empty();
+        $("#wordinfo").empty();
+        $(".lemma").css('font-weight', 'normal');
+        $("#" + lemma).css('font-weight', 'bold');
+
+        $.getJSON("static/lemmas12-2-20.json", function (result) {
+            for (dict of result) {
+                if (dict['lemma'] == lemma) {
+                    lemmadict = dict;
+                    break;
+                }
+            }
+            for (key of Object.keys(lemmadict)) {
+                if (key != 'prefixes' && key != 'suffixes' && key != 'roots') {
+                    $('#lemmadict').append("<p><b>" + key + "</b>: " + lemmadict[key] + "</p>");
+                }
+            }
+            $('#wordinfo').append("<p>" + '<b>Prefixes: </b>' + lemmadict['prefixes'] + "</p>");
+            $('#wordinfo').append("<p style='color: red'>" + '<b>Roots: </b>' + lemmadict['roots'] + "</p>");
+            $('#wordinfo').append("<p>" + '<b>Suffixes: </b>' + lemmadict['suffixes'] + "</p>");
+        });
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Root families
+{% endblock %}
+
+{% block main %}
+<div class="row">
+    <div class="col-md-12">
+        <h5>Click on a root family to see its lemmas.</h5>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        {% for rootfamily in rootfamilies %}
+        <form action="/contents" method="post">
+            <input type="submit" name="rootfamily" value="{{ rootfamily }}" style="font-weight: bold;"> <b>Number of entries: </b>{{ lengthdict[rootfamily] }}</input>
+        </form>
+        <br>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
